@@ -19,9 +19,18 @@ __pycache__/
 /exports/
 *.jsonl
 
+# Individual homework reports and native AI-session exports
+/*_session1_session*.json
+/*_session1_report*.docx
+/*_session1_report*.pdf
+/notes/session1_report.md
+/notes/session1_report_draft.md
+/notes/session1_submission_checklist.md
+
 # Course-provided source materials in this workspace
 /LLM4Recsys 07. LLM-Based Recommendation and FAR-Trans Project.pptx
 /session1_research_question_instructions (1).md
+/FAR-Trans_shared_scope.txt
 
 # OS files
 .DS_Store
