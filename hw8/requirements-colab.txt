@@ -1,0 +1,10 @@
+# Python 3.11/3.12 Colab runtime. Restart kernel after installing.
+numpy==2.2.6
+torch==2.7.1
+# Align Colab's preinstalled optional Torch packages with the pinned Torch ABI.
+torchvision==0.22.1
+torchaudio==2.7.1
+transformers==4.51.3
+tokenizers==0.21.1
+huggingface-hub==0.31.4
+safetensors==0.5.3

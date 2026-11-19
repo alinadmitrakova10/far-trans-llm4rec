@@ -61,7 +61,17 @@ profiles every table. Reruns use the checksum-verified cache; `--refresh` downlo
 
 The shared proposal compares a structured purchase-profile encoder with a frozen
 LLM encoder using the same input information and user-kNN scoring algorithm.
-Recommendation-model experiments and nDCG@10 measurements have not been run.
+At the end of Session 1, recommendation-model experiments and nDCG@10 measurements had not been run.
+
+## HW8 — individual user-history Encoder
+
+The implementation, frozen experimental choices and manual Google Colab workflow
+are in [hw8/README.md](hw8/README.md). The research question remains frozen Qwen
+versus structured encoding of the same past-purchase profile with identical user-kNN.
+The four instructor baselines and both Encoder branches have now been run under
+the HW8 defaults in Google Colab on Tesla T4. See [actual run checks](hw8/LOCAL_VALIDATION.md)
+and the [OpenCode handoff](hw8/COLAB_GPU_HANDOFF.md). The individual PDF and the
+team baseline exchange remain pending. Data, model files and outputs stay out of Git.
 
 ## Collaboration
 

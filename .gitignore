@@ -35,3 +35,17 @@ __pycache__/
 # OS files
 .DS_Store
 Thumbs.db
+
+# HW8 local references, run outputs and submission exports
+/hw8/reference/
+/hw8/outputs/
+/hw8/.venv/
+/hw8/**/.ipynb_checkpoints/
+/hw8/*_report*.pdf
+/hw8/*_report*.docx
+/hw8/*_session*.json
+/hw8/*_session*.jsonl
+# Course-provided HW8 materials kept local
+/homework2.md
+/project_GSB_AVITO (2).md
+/LLM4Recsys 08. LLM-Based Recommendation and FAR-Trans Project.pptx
