@@ -1,0 +1,5 @@
+data/hw2/inputs/
+data/hw2/models/
+data/hw2/hf_cache/
+.venv*/
+__pycache__/
