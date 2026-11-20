@@ -10,20 +10,22 @@ Recommend a ranked **Top-10 list of financial assets** for each evaluated user u
 - Dataset paper: [FAR-Trans: An Investment Dataset for Financial Asset Recommendation](https://arxiv.org/abs/2407.08692)
 - Instructor: [Seungmin Jin (dryjins)](https://github.com/dryjins)
 
-The eligible assets, evaluated users, time split and transaction-label rules are pending instructor confirmation. Any provisional choices must be marked as assumptions.
+The HW8 teaching protocol uses 100 users, 767 eligible assets, a 1 June 2021
+cutoff, and June purchases for evaluation. The final project benchmark has
+its own protocol.
 
-## Current stage: Session 1 / Define
+## Current stage: Session 2 / HW8
 
-Prepare one focused research question, one actual data example and a feasible experimental comparison. Full model implementation and final results are not required at this stage.
+Team 5 agreed on a research question about changes in nDCG@10 when LLMs are
+used for user histories, asset representation, or fixed-candidate reranking.
+Each member tested a separate change against the corresponding control.
 
-- [ ] Confirm the formal team name and final working project title.
-- [ ] Register the team and repository in the course grade sheet's Projects tab.
-- [x] Inspect the public dataset and document a real anonymized record.
-- [x] Review five related studies and identify the nearest prior work.
-- [x] Propose a classical baseline, a same-information comparison and an ablation.
-- [x] Share the initial project options with the team.
-- [ ] Agree on the final research question and track: Encoder, Ranker or Hybrid.
-- [ ] Each student prepares an individual PDF report and an AI-session export.
+- [x] Agree on the teaching protocol and share the four starter baselines.
+- [x] Complete three individual experiments and publish code on the individual branches.
+- [x] Prepare Alina's individual PDF and OpenCode export locally.
+
+See the [HW8 status and results](hw8/PLAN.md) for the question, both evaluation
+averages, links to the experiments, and the submission checklist.
 
 ## Team
 
@@ -32,9 +34,8 @@ Prepare one focused research question, one actual data example and a feasible ex
 - Leader Telegram ID: **@alinakozhokar**.
 - Members: **Кожокарь Алина, Целищева Ульяна, Бабичева Дарья**.
 
-The team responded positively to the initial Encoder and fixed-candidate LLM-reranking
-ideas. Detailed discussion and the final choice are deferred to the next assignment.
-Encoder is a working proposal, not an agreed team decision.
+Alina tested user-history encoding, Uliana tested asset encoding, and Daria
+tested reranking. All three used the agreed temporal evaluation protocol.
 
 ## Getting started
 
@@ -56,10 +57,10 @@ profiles every table. Reruns use the checksum-verified cache; `--refresh` downlo
 
 - [Analysis notes, real record and leakage constraints](notes/far_trans_session1.md) (Russian).
 - [Generated field dictionary and audit results](notes/far_trans_profile.md).
-- [Literature review and proposed research question](notes/session1_literature_and_rq.md) (Russian; final team choice pending).
+- [Literature review and proposed research question](notes/session1_literature_and_rq.md) (Russian; Session 1 proposal).
 - Full machine-readable audit: `data/processed/far_trans_audit.json` (local, ignored by Git).
 
-The shared proposal compares a structured purchase-profile encoder with a frozen
+Alina's Session 1 proposal compares a structured purchase-profile encoder with a frozen
 LLM encoder using the same input information and user-kNN scoring algorithm.
 At the end of Session 1, recommendation-model experiments and nDCG@10 measurements had not been run.
 
@@ -70,8 +71,9 @@ are in [hw8/README.md](hw8/README.md). The research question remains frozen Qwen
 versus structured encoding of the same past-purchase profile with identical user-kNN.
 The four instructor baselines and both Encoder branches have now been run under
 the HW8 defaults in Google Colab on Tesla T4. See [actual run checks](hw8/LOCAL_VALIDATION.md)
-and the [OpenCode handoff](hw8/COLAB_GPU_HANDOFF.md). The individual PDF and the
-team baseline exchange remain pending. Data, model files and outputs stay out of Git.
+and the [Colab handoff](hw8/COLAB_GPU_HANDOFF.md). Uliana and Daria reused the
+shared baseline. Alina's PDF and OpenCode export are stored locally for the
+individual submission.
 
 ## Collaboration
 
