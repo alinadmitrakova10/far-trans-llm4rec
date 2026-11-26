@@ -4,6 +4,7 @@ import argparse
 import hashlib
 import json
 from pathlib import Path
+import re
 from zipfile import ZipFile
 
 from pools import ROOT, read_json, sha256, write_json
@@ -68,7 +69,6 @@ def verify(notebook, archive=None):
     require([c['execution_count'] for c in cells] == list(range(1, 8)) and
             all(o['output_type'] != 'error' for c in cells for o in c['outputs']), 'Notebook execution incomplete')
     outputs = json.dumps([c.get('outputs', []) for c in cells] + [executed['metadata']], ensure_ascii=False)
-    import re
     for values in (users, protocol['eligible_assets']):
         require(not any(re.search(r'\b' + re.escape(s) + r'\b', outputs) for s in values),
                 'User identifiers or ISIN in notebook outputs')
