@@ -1,0 +1,163 @@
+{
+  "protocol_version": 1,
+  "frozen_date": "2026-11-26",
+  "track": "Ranker",
+  "development": {
+    "protocol_hash": "50efd4aeb415ba6f0c66dd0793a7c2033cdc32a42b86b58eebbca3e81eaf3417",
+    "cohort": "warm",
+    "users": 100,
+    "cutoff": "2021-06-01",
+    "end_exclusive": "2021-07-01",
+    "horizon_days": 30,
+    "repeat_purchases_allowed": true,
+    "fixed_users_catalog_labels_and_rules": true
+  },
+  "pool_selection": {
+    "cutoff": "2021-05-01",
+    "end_exclusive": "2021-05-31",
+    "horizon_days": 30,
+    "cohort": "warm",
+    "users": 1000,
+    "user_order": ["ascending_sha256_of_42_colon_user_id", "ascending_user_id"],
+    "reference": "P0",
+    "eligible_pools": ["U1", "U2", "U3"],
+    "diagnostics": ["covered_future_pairs", "purchasing_users_with_hit", "oracle_ndcg_at_10_all_and_nonempty"],
+    "criteria_in_order": ["max_covered_future_pairs", "max_purchasing_users_with_hit", "rule_priority"],
+    "rule_priority": ["U1", "U3", "U2"],
+    "decision_file": "DECISIONS.md",
+    "record_before_june_runs": true
+  },
+  "pools": {
+    "target_size": 20,
+    "eligible_only": true,
+    "unique_isins": true,
+    "sources_strictly_before_cutoff": true,
+    "allow_short_pool": true,
+    "record_short_pool": true,
+    "pad_short_pool": false,
+    "sources": {
+      "cbf": {"function": "starter.content_scores + starter.order", "limit": 50},
+      "recency": {"transaction_type": "Buy", "order": ["last_buy_date_desc", "isin_asc"], "limit": null},
+      "popularity": {"function": "starter.popularity_scores + starter.order", "limit": null}
+    },
+    "rules": {
+      "P0": {"mode": "concatenate", "steps": [{"source": "cbf", "limit": 20}]},
+      "U1": {"mode": "concatenate", "steps": [{"source": "recency"}, {"source": "cbf"}, {"source": "popularity"}]},
+      "U2": {"mode": "round_robin_next_unseen", "steps": [{"source": "cbf"}, {"source": "recency"}, {"source": "popularity"}]},
+      "U3": {"mode": "concatenate", "steps": [{"source": "cbf", "limit": 10}, {"source": "recency"}, {"source": "popularity"}]}
+    }
+  },
+  "methods": {
+    "starter_baselines": ["popularity", "cbf", "latest_buy", "latest_buy_or_sell"],
+    "matched_control": {"source": "chosen_pool_original_order", "k": 10},
+    "lambdamart": {
+      "pool": "chosen_pool",
+      "train_cutoffs": ["2021-01-01", "2021-03-01", "2021-04-01"],
+      "validation_cutoff": "2021-05-01",
+      "label_horizon_days": 30,
+      "cohort": "warm",
+      "users_per_cutoff": 1000,
+      "label": "eligible_buy_in_window_binary",
+      "keep_zero_positive_groups": true,
+      "feature_fit": "train_only",
+      "source_cbf_rank": {"source": "true_cbf50_position", "outside_cbf50": null, "missing_encoded_as": -1, "missing_indicator": true},
+      "source_cbf_score": "full_eligible_catalog_score",
+      "group_size": "actual_pool_length",
+      "lightgbm_version": "4.7.0",
+      "objective": "lambdarank",
+      "base_config": "hw8/daria_babikova/hw2/LAMBDAMART_CONFIG.json",
+      "num_leaves_grid": [7, 15],
+      "num_boost_round_grid": [100, 200],
+      "selection_seed": 0,
+      "selection_order": ["validation_ndcg_at_10_all_desc_unrounded", "num_boost_round_asc", "num_leaves_asc", "configuration_id_asc"],
+      "prediction_tie_break": "isin_asc",
+      "refit_on_validation": false,
+      "freeze_before_june": true
+    },
+    "llm": {
+      "pool": "chosen_pool",
+      "presentation_order": "original_pool_order",
+      "prompt_source": "hw8/daria_babikova/hw2/scripts/llm_ranker.py",
+      "omit_candidate_fields": ["source_cbf_rank"],
+      "omit_instruction_about_source_cbf_rank": true,
+      "calls_per_user": 1,
+      "aggregate_calls": false,
+      "generation": {
+        "model": "Qwen/Qwen3-1.7B",
+        "revision": "70d244cc86ccca08cf5af4e1e306ecf908b1ad5e",
+        "platform": "Colab",
+        "device": "cuda",
+        "dtype": "float16",
+        "attention_implementation": "sdpa",
+        "torch_seed": 0,
+        "max_new_tokens": 256,
+        "context_limit_including_output": 16384,
+        "thinking": false,
+        "decoding": "greedy",
+        "do_sample": false,
+        "truncate_input": false,
+        "use_kv_cache_within_call": true,
+        "reuse_generated_responses_across_calls": false,
+        "record_actual_gpu_dtype_and_versions": true
+      },
+      "response": {
+        "format": "strict_json_array_of_distinct_candidate_alias_strings",
+        "length": 10,
+        "strip_edge_whitespace": true,
+        "repairs": [],
+        "retry_invalid_response": false,
+        "fallback": "original_pool_first10",
+        "retain_fallback_users": true,
+        "backend_error": "incomplete_run"
+      }
+    },
+    "references": {
+      "hw8_saved_on_p0": ["lambdamart", "llm_original", "llm_permuted"],
+      "teacher": {
+        "script": "vendor/far-trans-llm/ranker.py",
+        "candidate_count": 50,
+        "history_events": 15,
+        "on_invalid": "fallback",
+        "model_setup": "same_pinned_qwen_required_cli_argument",
+        "matched_control": "candidate_order_first10"
+      }
+    }
+  },
+  "ablation": {
+    "user_order": ["past_eligible_buy_event_count_asc", "user_id_asc"],
+    "block_size": 5,
+    "merge_final_singleton_with_previous": true,
+    "permutation": "python_random_seeded_shuffle_reject_fixed_points_within_block",
+    "seeds": [0, 1, 2],
+    "replace_with_donor": ["history_rows", "history_summary"],
+    "fixed": ["user_alias", "cutoff", "profile", "candidate_rows_and_order", "generation_settings"],
+    "wire_aliases": "retain_recipient_mapping_add_unused_aliases_for_new_donor_assets_in_canonical_order",
+    "calls_per_user_per_seed": 1,
+    "total_calls": 300,
+    "comparison": "per_user_mean_ndcg_across_seeds_vs_main_with_per_seed_breakdown"
+  },
+  "metrics": {
+    "primary": "mean_ndcg_at_10_all",
+    "report_nonempty_mean_and_count": true,
+    "empty_truth_score": 0.0,
+    "relevance": "binary_eligible_future_buy",
+    "idcg": "full_truth_including_outside_pool",
+    "display_decimals": 4,
+    "pool_coverage": ["covered_future_pairs", "purchasing_users_with_hit"],
+    "pairwise_subset": "purchasing_users",
+    "pairwise_tie_absolute_tolerance": 1e-12,
+    "pairwise_comparisons": [["llm", "matched_control"], ["llm", "lambdamart"], ["lambdamart", "matched_control"], ["ablation", "llm"]],
+    "top10_hit_counts": ["all", "nonempty"],
+    "count_ordered_top10_different_from_matched_control": true,
+    "popularity_overlap": "same_user_same_rank_share_over_all_ten_slots_missing_positions_do_not_match",
+    "response_diagnostics": ["invalid", "repair", "fallback"],
+    "response_diagnostic_counts": ["calls", "distinct_users"],
+    "separate_valid_only_ndcg_and_denominators": true
+  },
+  "manual_check": {
+    "performed_by": "Дарья Бабикова",
+    "selection": "first_nonempty_in_protocol_order_with_llm_top10_different_from_matched_control",
+    "actions": ["find_eligible_june_buy_rows", "compute_dcg_idcg_ndcg_at_10_for_both_rankings", "compare_with_per_user"],
+    "if_no_matching_user": "record_absence"
+  }
+}
