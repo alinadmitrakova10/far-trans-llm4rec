@@ -1,0 +1,7 @@
+# Python 3.11/3.12; same Qwen environment as HW8. Restart after installation.
+-r ../hw8/requirements-colab.txt
+scipy==1.17.0
+scikit-learn==1.8.0
+joblib==1.6.0
+threadpoolctl==3.8.0
+cloudpickle==3.1.3

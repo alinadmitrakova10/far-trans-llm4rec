@@ -49,3 +49,7 @@ Thumbs.db
 /homework2.md
 /project_GSB_AVITO (2).md
 /LLM4Recsys 08. LLM-Based Recommendation and FAR-Trans Project.pptx
+
+# HW9 local run artifacts and course materials
+/hw9/outputs/
+/hw9/*.pptx
