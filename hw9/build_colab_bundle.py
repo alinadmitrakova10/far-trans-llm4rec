@@ -12,10 +12,12 @@ def main():
     load_starter(starter)
     verification = ROOT / 'hw9/outputs/hw8_reproduction_20261126/verification.json'
     reference = load(verification)
-    files = [*sorted((ROOT / 'hw9').glob('*.py')),
-             ROOT / 'hw9/requirements-colab.txt', ROOT / 'hw9/requirements-local.txt',
-             ROOT / 'hw9/README.md', ROOT / 'hw9/COLAB.md', ROOT / 'hw9/PLAN.md',
-             ROOT / 'hw9/notebooks/hw9_fresh_qwen_t4.ipynb',
+    hw9_files = (
+        'README.md', 'requirements-colab.txt', 'requirements-local.txt',
+        'build_colab_bundle.py', 'check_colab.py', 'run.py', 'summarize.py',
+        'test_local.py', 'verify_hw8.py', 'notebooks/hw9_fresh_qwen_t4.ipynb',
+    )
+    files = [*(ROOT / 'hw9' / name for name in hw9_files),
              *sorted((ROOT / 'hw8/src').glob('*.py')), ROOT / 'hw8/requirements-colab.txt',
              starter, verification]
     for relative, info in reference['inventory'].items():
